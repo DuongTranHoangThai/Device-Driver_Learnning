@@ -1,4 +1,4 @@
-Control the led user 1 on BeagleBoneBlack  
+# Control the led user 1 on BeagleBoneBlack  
 Build  
 **make**  
 Run  
