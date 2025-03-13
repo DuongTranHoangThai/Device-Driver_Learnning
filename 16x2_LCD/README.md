@@ -8,28 +8,88 @@ Data from LCD is directly connected to the board as below:
 
 ```
 ===========================================================================================================
-BBB_expansion_header_pins       GPIO number     16x2 LCD pin      Purpose
+BBB_expansion_header_pins       GPIO number     16x2 LCD pin      Purpose 
 ===========================================================================================================
 P8.7                              gpio2.2          4(RS)           Register selection (Character vs. Command)
-P8.46                             gpio2.7          5(RW)           Read/write
+P8.46                             gpio2.7          5(RW)           Read/write 
 P8.43                             gpio2.8          6(EN)           Enable
 P8.44                             gpio2.9          11(D4)          Data line 4
 P8.41                             gpio2.10         12(D5)          Data line 5
 P8.42                             gpio2.11         13(D6)          Data line 6
-P8.39                             gpio2.12         14(D7)          Data line 7
+P8.39                             gpio2.12         14(D7)          Data line 7 
 P9.7(GND)                                          15(BKLTA)       Backlight anode(+)
 P9.1(sys_5V supply)                                16(BKLTK)       Backlight cathode(-)
 P9.1 (GND)                        ----             1(VSS/GND)      Ground
-P9.7(sys_5V supply)               ----             2(VCC)          +5V supply
+P9.7(sys_5V supply)               ----             2(VCC)          +5V supply 
 ===========================================================================================================
 ```
 
 ## 1. Modify Device Tree
 
-Create a device tree include file, include it into the main device tree of BeagleBone Black (`am335x-boneblack.dts`) with the following content:
+### Create Device Tree Include File
+
+Create a new file named `lcd16x2.dtsi` with the following content:
 
 ```dts
 / {
+       bone_gpio_devs {
+	  
+		     compatible = "org,bone-gpio-sysfs";
+		     pinctrl-single,names = "default";
+		     pinctrl-0 = <&p8_gpios>;
+		     status = "disable";
+		
+		        gpio1 {
+			        label = "gpio2.2";
+			        bone-gpios = <&gpio2 2 GPIO_ACTIVE_HIGH>;
+				        
+		        };
+
+		        gpio2 {
+			        label = "gpio2.7";
+			        bone-gpios = <&gpio2 7 GPIO_ACTIVE_HIGH>;
+		        };
+		        
+
+		        gpio3 {
+			        label = "gpio2.8";
+			        bone-gpios = <&gpio2 8 GPIO_ACTIVE_HIGH>;
+		        };
+		        
+		        
+		        gpio4 {
+			        label = "gpio2.9";
+			        bone-gpios = <&gpio2 9 GPIO_ACTIVE_HIGH>;
+		        };
+
+		        gpio5{
+			        label = "gpio2.10";
+			        bone-gpios = <&gpio2 10 GPIO_ACTIVE_HIGH>;
+		        };
+
+		        gpio6{
+			        label = "gpio2.11";
+			        bone-gpios = <&gpio2 11 GPIO_ACTIVE_HIGH>;
+		        };
+
+		        gpio7{
+			        label = "gpio2.12";
+			        bone-gpios = <&gpio2 12 GPIO_ACTIVE_HIGH>;
+		        };
+
+		        led1 {
+			        label = "usrled1:gpio1.22";
+			        bone-gpios = <&gpio1 22 GPIO_ACTIVE_HIGH>;
+		        };
+
+		        led2 {
+			        label = "usrled2:gpio1.23";
+			        bone-gpios = <&gpio1 23 GPIO_ACTIVE_HIGH>;
+		        };
+
+	};//bone_gpio_devs
+
+
     lcd16x2 {
             compatible = "org,lcd16x2";
             pictrl-names = "default";
@@ -43,33 +103,61 @@ Create a device tree include file, include it into the main device tree of Beagl
             d6-gpios = <&gpio2 11  GPIO_ACTIVE_HIGH>;
             d7-gpios = <&gpio2 12  GPIO_ACTIVE_HIGH>;
     };
-}; // root node
+
+
+}; //root node
 
 &tda19988 {
-    status = "disabled";
+	status = "disabled";
 };
 &lcdc {
     status = "disabled";
 };
 
+
 &am33xx_pinmux {
-    p8_gpios: bone_p8_gpios {
-        pinctrl-single,pins = <
-            AM33XX_PADCONF(AM335X_PIN_GPMC_ADVN_ALE,PIN_OUTPUT,MUX_MODE7) // P8.7 is used as alternative
-            AM33XX_PADCONF(AM335X_PIN_LCD_DATA1,PIN_OUTPUT,MUX_MODE7)
-            AM33XX_PADCONF(AM335X_PIN_LCD_DATA2,PIN_OUTPUT,MUX_MODE7)
-            AM33XX_PADCONF(AM335X_PIN_LCD_DATA3,PIN_OUTPUT,MUX_MODE7)
-            AM33XX_PADCONF(AM335X_PIN_LCD_DATA4,PIN_OUTPUT,MUX_MODE7)
-            AM33XX_PADCONF(AM335X_PIN_LCD_DATA5,PIN_OUTPUT,MUX_MODE7)
-            AM33XX_PADCONF(AM335X_PIN_LCD_DATA6,PIN_OUTPUT,MUX_MODE7)
-        >;
-    };
+	p8_gpios: bone_p8_gpios {
+		pinctrl-single,pins = < 
+                    AM33XX_PADCONF(AM335X_PIN_GPMC_ADVN_ALE,PIN_OUTPUT,MUX_MODE7) // P8.7 is used alter
+					/* AM33XX_PADCONF(AM335X_PIN_LCD_DATA0,PIN_OUTPUT,MUX_MODE7) */ //not use due to affect boot mode 
+                    AM33XX_PADCONF(AM335X_PIN_LCD_DATA1,PIN_OUTPUT,MUX_MODE7) 
+					AM33XX_PADCONF(AM335X_PIN_LCD_DATA2,PIN_OUTPUT,MUX_MODE7) 
+					AM33XX_PADCONF(AM335X_PIN_LCD_DATA3,PIN_OUTPUT,MUX_MODE7) 
+					AM33XX_PADCONF(AM335X_PIN_LCD_DATA4,PIN_OUTPUT,MUX_MODE7) 
+					AM33XX_PADCONF(AM335X_PIN_LCD_DATA5,PIN_OUTPUT,MUX_MODE7) 
+					AM33XX_PADCONF(AM335X_PIN_LCD_DATA6,PIN_OUTPUT,MUX_MODE7) 
+		>;
+
+	};
+
 };
 ```
 
 ## 2. Rebuild and Apply Device Tree
 
-Copy the modified device tree to the board and apply it at boot.
+### Rebuild Device Tree
+```sh
+sudo dtc -O dtb -o am335x-boneblack.dtb -b 0 -@ am335x-boneblack.dts
+```
+
+### Apply New Device Tree at Boot
+Copy the generated `am335x-boneblack.dtb` to the `/boot/dtbs/` directory:
+```sh
+sudo cp am335x-boneblack.dtb /boot/dtbs/
+```
+
+Then update the `uEnv.txt` file to use the new device tree:
+```sh
+sudo nano /boot/uEnv.txt
+```
+Modify the following line:
+```sh
+dtb=am335x-boneblack.dtb
+```
+Save and exit, then reboot the board:
+```sh
+sudo reboot
+```
 
 ## 3. Build the Kernel Module
 
