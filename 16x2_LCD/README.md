@@ -132,6 +132,13 @@ Create a new file named `lcd16x2.dtsi` with the following content:
 
 };
 ```
+### Include the `.dtsi` File in the Main Device Tree
+
+Edit the `am335x-boneblack.dts` file and add the following line at an appropriate place:
+
+```dts
+#include "lcd16x2.dtsi"
+```
 
 ## 2. Rebuild and Apply Device Tree
 
