@@ -32,63 +32,7 @@ Create a new file named `lcd16x2.dtsi` with the following content:
 
 ```dts
 / {
-       bone_gpio_devs {
-	  
-		     compatible = "org,bone-gpio-sysfs";
-		     pinctrl-single,names = "default";
-		     pinctrl-0 = <&p8_gpios>;
-		     status = "disable";
-		
-		        gpio1 {
-			        label = "gpio2.2";
-			        bone-gpios = <&gpio2 2 GPIO_ACTIVE_HIGH>;
-				        
-		        };
-
-		        gpio2 {
-			        label = "gpio2.7";
-			        bone-gpios = <&gpio2 7 GPIO_ACTIVE_HIGH>;
-		        };
-		        
-
-		        gpio3 {
-			        label = "gpio2.8";
-			        bone-gpios = <&gpio2 8 GPIO_ACTIVE_HIGH>;
-		        };
-		        
-		        
-		        gpio4 {
-			        label = "gpio2.9";
-			        bone-gpios = <&gpio2 9 GPIO_ACTIVE_HIGH>;
-		        };
-
-		        gpio5{
-			        label = "gpio2.10";
-			        bone-gpios = <&gpio2 10 GPIO_ACTIVE_HIGH>;
-		        };
-
-		        gpio6{
-			        label = "gpio2.11";
-			        bone-gpios = <&gpio2 11 GPIO_ACTIVE_HIGH>;
-		        };
-
-		        gpio7{
-			        label = "gpio2.12";
-			        bone-gpios = <&gpio2 12 GPIO_ACTIVE_HIGH>;
-		        };
-
-		        led1 {
-			        label = "usrled1:gpio1.22";
-			        bone-gpios = <&gpio1 22 GPIO_ACTIVE_HIGH>;
-		        };
-
-		        led2 {
-			        label = "usrled2:gpio1.23";
-			        bone-gpios = <&gpio1 23 GPIO_ACTIVE_HIGH>;
-		        };
-
-	};//bone_gpio_devs
-
+       
 
     lcd16x2 {
             compatible = "org,lcd16x2";
