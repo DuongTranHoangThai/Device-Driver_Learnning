@@ -32,8 +32,6 @@ Create a new file named `lcd16x2.dtsi` with the following content:
 
 ```dts
 / {
-       
-
     lcd16x2 {
             compatible = "org,lcd16x2";
             pictrl-names = "default";
@@ -47,8 +45,6 @@ Create a new file named `lcd16x2.dtsi` with the following content:
             d6-gpios = <&gpio2 11  GPIO_ACTIVE_HIGH>;
             d7-gpios = <&gpio2 12  GPIO_ACTIVE_HIGH>;
     };
-
-
 }; //root node
 
 &tda19988 {
